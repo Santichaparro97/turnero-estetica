@@ -93,7 +93,7 @@
   var WEEK=[["HOY","sáb 14"],["MAÑANA","dom 15"],["LUNES","lun 16"],["MARTES","17 jun"],["MIÉ","18 jun"],["JUE","19 jun"],["VIE","20 jun"]];
   var TIMES=["10:00","10:30","11:00","11:30","14:00","14:30","15:00","16:00","17:00","18:00"];
   var VISITS=2,GOAL=3,NAME="Sofi";
-  var st={view:"home",step:0,cat:null,service:null,pro:null,day:null,time:null,daysShown:3,openDays:[0,1]};
+  var st={view:"home",step:0,cat:null,service:null,pro:null,proPreset:false,day:null,time:null,daysShown:3,openDays:[0,1]};
 
   function ring(t,size){size=size||64;return '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#E3B7BC,#B76E79,#E8C9CC);flex:none;"><div style="width:100%;height:100%;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;font-family:\'Playfair Display\';font-weight:600;font-size:'+(size/2.7)+'px;color:var(--rose);">'+t+'</div></div>';}
   function ph(icon,h){var num=(typeof h==="number");var hh=num?h+"px":h;var isz=num?Math.round(h/3.2):66;return '<div style="position:relative;height:'+hh+';background:linear-gradient(150deg,#F6DCDD,#EAC5C9 60%,#E0B3BC);"><div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,0.22) 0 10px,transparent 10px 20px);"></div><i class="ti ti-'+icon+'" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);color:rgba(255,255,255,0.85);font-size:'+isz+'px;"></i></div>';}
@@ -104,6 +104,7 @@
   function money(p){return '$'+(+p).toLocaleString("es-AR");}
 
   function HOME(){
+    st.pro=null;st.proPreset=false;
     var h='<div class="up">';
     h+='<div style="height:18px;padding-top:env(safe-area-inset-top);"></div>';
     h+='<div style="display:flex;align-items:center;gap:16px;padding:8px 18px 0;">'+ring("L",80)
@@ -163,7 +164,7 @@
         +'<div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:10px;color:var(--rose);"><span class="lab" style="font-size:11px;">Elegir</span><i class="ti ti-arrow-right"></i></div>'
       +'</button>';});
       h+='</div></div>';screen.innerHTML=h;
-      Array.prototype.forEach.call(screen.querySelectorAll(".opt"),function(el){el.addEventListener("click",function(){el.classList.add("pop");st.service=c.s[+el.getAttribute("data-i")];setTimeout(function(){st.step=3;render();},140);});});bindBack();
+      Array.prototype.forEach.call(screen.querySelectorAll(".opt"),function(el){el.addEventListener("click",function(){el.classList.add("pop");st.service=c.s[+el.getAttribute("data-i")];setTimeout(function(){st.step=st.proPreset?4:3;render();},140);});});bindBack();
     }
     else if(s===3){
       h=topflow("Paso 3 · Profesional")+'<div class="up" style="padding:6px 0;min-height:calc(100% - 64px);display:flex;flex-direction:column;justify-content:center;">'+htitle("Elegí tu","profesional");
@@ -196,7 +197,7 @@
       h+='<div style="font-size:14px;color:var(--dim);margin-top:8px;line-height:1.6;">Nos vemos '+(st.day||"pronto")+', <span style="color:var(--rose);font-weight:500;">'+NAME+'</span>.<br>Te va a quedar <span style="font-style:italic;">hermoso</span>.</div>';
       h+='<button class="restart lab" style="margin-top:34px;color:var(--rose);font-size:10px;">Volver al inicio</button>';
       h+='</div>';screen.innerHTML=h;
-      screen.querySelector(".restart").addEventListener("click",function(){st={view:"home",step:0,cat:null,service:null,pro:null,day:null,time:null,daysShown:3,openDays:[0,1]};render();});
+      screen.querySelector(".restart").addEventListener("click",function(){st={view:"home",step:0,cat:null,service:null,pro:null,proPreset:false,day:null,time:null,daysShown:3,openDays:[0,1]};render();});
     }
   }
 
@@ -239,7 +240,7 @@
       +'<div style="position:absolute;left:0;right:0;bottom:0;padding:18px;background:linear-gradient(transparent,rgba(74,40,45,.55));"><div class="lab" style="font-size:9px;color:#fff;">Especialista</div><div class="disp" style="font-size:40px;font-weight:700;color:#fff;">'+p.n+'</div><div class="lab" style="font-size:10px;color:#ffe;"><i class="ti ti-star"></i> '+p.r+' · '+p.c+' servicios</div></div></div>'
       +'<div style="flex:1;padding:16px 18px;display:flex;flex-direction:column;min-height:0;"><div class="lab" style="font-size:9px;color:var(--rose);margin-bottom:8px;">'+p.h+'</div><p style="font-size:13px;color:#7a6464;line-height:1.65;margin:0;overflow:auto;">'+p.x+'</p>'
       +'<div style="margin-top:auto;padding-top:14px;"><button class="conf rbtn" style="width:100%;padding:15px;font-size:15px;">Reservar con '+p.n+' <i class="ti ti-arrow-right"></i></button></div></div>';
-    var ov=overlay(inner);ov.querySelector(".conf").onclick=function(){st.pro=p;ov.remove();if(st.view==="flow"&&st.step===3){st.step=4;render();}else{go("flow",1);}};}
+    var ov=overlay(inner);ov.querySelector(".conf").onclick=function(){st.pro=p;ov.remove();if(st.view==="flow"&&st.step===3){st.step=4;render();}else{st.proPreset=true;go("flow",1);}};}
 
   function openWork(i){var w=works[i];
     var inner='<div style="height:60%;position:relative;">'+ph("sparkles","100%")
@@ -248,7 +249,7 @@
       +'<div style="margin-top:auto;padding-top:14px;"><button class="conf rbtn" style="width:100%;padding:15px;font-size:15px;">Pedir un turno <i class="ti ti-arrow-right"></i></button></div></div>';
     var ov=overlay(inner);ov.querySelector(".conf").onclick=function(){ov.remove();go("flow",1);};}
 
-  function backStep(){var ovl=document.querySelector("#phone .ovl");if(ovl){ovl.remove();return;}if(st.view!=="flow")return;if(st.step<=1){go("home",0);}else{st.step--;render();}}
+  function backStep(){var ovl=document.querySelector("#phone .ovl");if(ovl){ovl.remove();return;}if(st.view!=="flow")return;if(st.step<=1){go("home",0);}else if(st.step===4&&st.proPreset){st.step=2;render();}else{st.step--;render();}}
   function bindBack(){var b=screen.querySelector(".bk");if(b)b.addEventListener("click",backStep);}
   function render(){st.view==="home"?HOME():FLOW();}
   (function(){var p=document.getElementById("phone"),sx=0,sy=0,inCar=false;
